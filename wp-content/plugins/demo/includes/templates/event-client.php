@@ -1,34 +1,90 @@
+<?php
+$cur_url = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+?>
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/qstyle.css">
-  <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+  <link rel="stylesheet" href="<?php echo plugin_dir_url( __FILE__ );?>css/bootstrap.min.css">
+  <link rel="stylesheet" href="<?php echo plugin_dir_url( __FILE__ );?>css/qstyle.css" type="text/css" media="screen" />
+  <script src="<?php echo plugin_dir_url( __FILE__ );?>js/jquery-1.10.2.js"></script>
+  <script src="<?php echo plugin_dir_url( __FILE__ );?>js/ec_main.js"></script>
 </head>
 <body>
 <div class="container">
-  <h2><?php echo esc_html( get_admin_page_title() ); ?></h2>
+  <h1>Danh sách người dùng đã tham gia events</h1>
+	<br>
+	<form action="<?php echo $cur_url ; ?>" method="get">
+	<input type="hidden" name="page" value="<?php echo $_GET['page']; ?>">
+	<div class="row">
+		<div class="col-sm-3">
+			<label for="comment">Tên:</label>
+			<input type="text" class="form-control" id="usr_name" name="usr_name" value="<?php echo isset($filter['usr_name'])?$filter['usr_name']:''; ?>">
+		</div>
+	<div class="col-sm-3">
+		<label for="comment">Email:</label>
+		<input type="text" class="form-control" id="usr_email" name="usr_email" value="<?php echo isset($filter['usr_email'])?$filter['usr_email']:''; ?>">
+	</div>
+	<div class="col-sm-3">
+		<label for="comment">Điện thoại:</label>
+		<input type="text" class="form-control" id="usr_phone" name="usr_phone" value="<?php echo isset($filter['usr_phone'])?$filter['usr_phone']:''; ?>">
+	</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-3">
+			<label for="comment">Thời gian - từ ngày:</label>
+			<input type="text" class="form-control" id="usr_datefrom" name="usr_datefrom" value="<?php echo isset($filter['usr_datefrom'])?$filter['usr_datefrom']:''; ?>">
+		</div>
+		<div class="col-sm-3">
+			<label for="comment">Thời gian - đến ngày:</label>
+			<input type="text" class="form-control" id="usr_dateto" name="usr_dateto" value="<?php echo isset($filter['usr_dateto'])?$filter['usr_dateto']:''; ?>">
+		</div>
+		<div class="col-sm-3">
+			<div class="btn-group">
+				<button type="submit" class="btn btn-primary btn-search">Tìm</button>
+			</div>
+		</div>
+	</div>
+	</form>
+	<div class="row">
+		<button type="button" class="btn btn-warning btn-excel" id="export_csv">Xuất dữ liệu ra file CSV</button>
+	</div>
+
+	<br><br><br>
    <table class="table" id="qtable">
     <thead>
       <tr>
         <th>Tên khách hàng</th>
         <th>Email</th>
+		 <th>Số điện thoại</th>
+		 <th>Hình ảnh</th>
         <th>Thời gian</th>
       </tr>
     </thead>
     <tbody>
-	<?
-	foreach( $clients as $client ):
+	<?php
+	foreach( $clients as $client ){
 	?>
 	<tr>
-	<td>John</td>
-	<td>john@example.com</td>
-	<td>27/08/2018 11:00 AM</td>
+	<td><?php echo $client->NAME; ?></td>
+	<td><?php echo $client->EMAIL; ?></td>
+	<td><?php echo $client->PHONE; ?></td>
+	<td><img src="<?php echo $client->PHOTO; ?>" width="100px" /></td>
+	<td><?php echo date('d/m/Y h:mA', strtotime($client->ADD_DATE)); ?></td>
 	</tr>
-	<?endforeach?>
+	<?php } ?>
     </tbody>
   </table>
+	<div class="navigation">
+		<ul>
+				<?php echo $paging; ?>
+				<!--li><a href="#" ><< Trước</a></li>
+				<li class="active"><a href="#" >1</a></li>
+				<li><a href="#">2</a></li>
+				<li><a href="#">3</a></li>
+				<li><a href="#">Sau >></a></li-->
+		</ul>
+	</div>
 </div>
 </body>
 </html>
