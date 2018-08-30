@@ -30,7 +30,14 @@ function show_event_client()
 	if( isset($_REQUEST['usr_phone']) ){
 		$arFilter['usr_phone'] = trim($_REQUEST['usr_phone']);
 	}
-		
+	
+	if( isset($_REQUEST['usr_datefrom']) ){
+		$arFilter['date']['from'] = trim($_REQUEST['usr_datefrom']);
+	}
+	
+	if( isset($_REQUEST['usr_dateto']) ){
+		$arFilter['date']['to'] = trim($_REQUEST['usr_dateto']);
+	}
 	$clients = $mfpd->event_list($arFilter);
 	$paging = $mfpd->paging($arFilter);
 	$mfpd->view( 'event-client', array(

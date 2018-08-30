@@ -47,7 +47,12 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$upload_overrides = array( 'test_form' => false );
 		$movefile = wp_handle_upload( $uploadedfile, $upload_overrides );
 		$photo = $movefile['url'];
-		$return['data'] = $client->add_event_client($name,$email,$photo);
+		$ID = $client->add_event_client($name,$email,$photo,$phone);
+		$return['data'] = array(
+			"ID" => $ID,
+			"PHOTO" => $photo
+		);
+		
 	}
 	
 }

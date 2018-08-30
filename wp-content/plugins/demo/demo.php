@@ -15,7 +15,7 @@ require 'includes/admin-menu.php';
 	class Demo {
 		
 		private $plugin_dir = '';
-		private $page_size = 2;
+		private $page_size = 10;
 		
 		function __construct() {
 			$this->plugin_dir = plugin_dir_path( __FILE__ );
@@ -109,11 +109,32 @@ require 'includes/admin-menu.php';
 							$sWhere .= "PHONE like '%".$value."%'";
 						}
 					break;
+					case 'date':
+						if( is_array($value) && !empty($value) ){
+														
+							if( $value['from']!='' ){
+								$sWhere .= $sWhere!=''?" AND ":"";
+								$date = str_replace('/', '-', $value['from']);
+								$date = date('Y-m-d', strtotime($date));
+								$value['from'] = $date." 00:00:00";
+								$sWhere .= "ADD_DATE >= '".$value['from'] ."'";	
+							}
+							
+							if( $value['to']!='' ){
+								$sWhere .= $sWhere!=''?" AND ":"";
+								$date = str_replace('/', '-', $value['to']);
+								$date = date('Y-m-d', strtotime($date));
+								$value['to'] = $date." 23:59:59";
+								$sWhere .= "ADD_DATE <= '".$value['to'] ."'";
+							}
+							
+						}
+					break;
 					default:
 						break;
 				}
 			}
-			$sWhere =  $sWhere!=''?(" WHERE ".$sWhere):$sWhere;
+			echo $sWhere =  $sWhere!=''?(" WHERE ".$sWhere):$sWhere;
 			return $sWhere;
 		}
 
