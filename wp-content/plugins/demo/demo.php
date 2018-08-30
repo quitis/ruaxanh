@@ -134,7 +134,7 @@ require 'includes/admin-menu.php';
 						break;
 				}
 			}
-			echo $sWhere =  $sWhere!=''?(" WHERE ".$sWhere):$sWhere;
+			$sWhere =  $sWhere!=''?(" WHERE ".$sWhere):$sWhere;
 			return $sWhere;
 		}
 

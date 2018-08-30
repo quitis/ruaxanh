@@ -16,8 +16,9 @@ $cur_url = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 <div class="container">
   <h1>Danh sách người dùng đã tham gia events</h1>
 	<br>
-	<form action="<?php echo $cur_url ; ?>" method="get">
+	<form action="<?php echo $cur_url ; ?>" method="get" id="form_client_list">
 	<input type="hidden" name="page" value="<?php echo $_GET['page']; ?>">
+	<input type="hidden" name="export" id="client_export" value="0">
 	<div class="row">
 		<div class="col-sm-3">
 			<label for="comment">Tên:</label>
@@ -43,7 +44,7 @@ $cur_url = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 		</div>
 		<div class="col-sm-3">
 			<div class="btn-group">
-				<button type="submit" class="btn btn-primary btn-search">Tìm</button>
+				<button type="button" class="btn btn-primary btn-search" id="search_client">Tìm</button>
 			</div>
 		</div>
 	</div>
@@ -80,11 +81,6 @@ $cur_url = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 	<div class="navigation">
 		<ul>
 				<?php echo $paging; ?>
-				<!--li><a href="#" ><< Trước</a></li>
-				<li class="active"><a href="#" >1</a></li>
-				<li><a href="#">2</a></li>
-				<li><a href="#">3</a></li>
-				<li><a href="#">Sau >></a></li-->
 		</ul>
 	</div>
 </div>

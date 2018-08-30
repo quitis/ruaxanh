@@ -6,11 +6,14 @@ $( document ).ready(function() {
 	
 	$( "#usr_datefrom" ).datepicker(date_format);
 	$( "#usr_dateto" ).datepicker(date_format);
-    //$("#export_csv").click(function(){
+    
+	$("#export_csv").click(function(){	
+		$("#client_export").val(1);
+		$("#form_client_list").submit();
+	});
 	
-	// $.post( "test.php", { name: "John", time: "2pm" })
-	  // .done(function( data ) {
-		// alert( "Data Loaded: " + data );
-	  // });
-	// });
+	$("#search_client").click(function(){	
+		$("#client_export").val(0);
+		$("#form_client_list").submit();
+	});
 });
