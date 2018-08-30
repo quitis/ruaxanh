@@ -2,7 +2,7 @@
 
 class Client_Api
 {
-	function add_event_client( $name,$email,$photo ){
+	function add_event_client( $name,$email,$photo,$phone='' ){
 		global $wpdb;
 		$wpdb->insert( 
 			'ruaxanh_event_clients', 
@@ -10,6 +10,7 @@ class Client_Api
 				'NAME' => $name, 
 				'EMAIL' => $email,
 				'PHOTO' => $photo,
+				'PHONE' => $phone,
 			));
 		return $wpdb->insert_id;
 	}
@@ -22,5 +23,3 @@ class Client_Api
 		return $arResult;
 	}
 }
-
-add_action( 'init', 'Client_Api' );

@@ -36,6 +36,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$client = new Client_Api();
 		$name = trim($_POST['client_name']);
 		$email = trim($_POST['client_email']);
+		$phone = isset($_POST['client_phone'])?trim($_POST['client_phone']):'';
 		
 		if ( ! function_exists( 'wp_handle_upload' ) ) {
 			require_once( ABSPATH . 'wp-admin/includes/file.php' );
