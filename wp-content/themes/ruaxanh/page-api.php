@@ -8,6 +8,10 @@ $return = array(
 	'data' => array()
 );
 
+define("PHOTO_WIDTH", 596);
+define("PHOTO_HEIGHT", 601);
+define("QUALITY", 100);
+
 if($_SERVER['REQUEST_METHOD'] === 'GET') {
     // call the save function.
 	if( isset($_GET['id']) && intval($_GET['id'])>0 ){
@@ -47,6 +51,11 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$upload_overrides = array( 'test_form' => false );
 		$movefile = wp_handle_upload( $uploadedfile, $upload_overrides );
 		$photo = $movefile['url'];
+		$file_path = $movefile['file'];
+		
+		$client->resize_image($file_path,PHOTO_WIDTH,PHOTO_HEIGHT,false,$file_path);
+		$client->merge_image($file_path,$file_path);
+		
 		$ID = $client->add_event_client($name,$email,$photo,$phone);
 		$return['data'] = array(
 			"ID" => $ID,
