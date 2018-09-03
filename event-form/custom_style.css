@@ -6,7 +6,7 @@ body, html {
     font-family: "Open sans", "Segoe UI", "Segoe WP", Helvetica, Arial, sans-serif;
 }
 body {
-    background-image: url("images/yr_microsite_FA.jpg");
+    background-image: url("images/site_background.jpg");
     background-position: 0 -40px;
     background-repeat: no-repeat;
     background-size: cover;
@@ -20,7 +20,7 @@ body.form-sutmited {
     padding-top:322px;
 }
 .event-custom-form {
-    padding-left: 8%;
+    padding-left: 7%;
     width:60%;
     text-align:center;
 	margin-top:15px;
@@ -31,7 +31,7 @@ body.form-sutmited {
 }
 .event-custom-form input[type="text"] {
     width: 96%;
-    padding: 10px 0px;
+    padding: 12px 15px;
     font-size: 14px;
     border: 1px solid #e0caca;
     margin: 0px 10px;
@@ -140,6 +140,7 @@ body.form-sutmited {
     padding: 2px 6px;
     border-radius: 3px;
 }
+<<<<<<< .mine
 .input-error {
     color: red;
     float: left;
@@ -207,3 +208,72 @@ body.form-sutmited {
 ::-ms-input-placeholder { /* Microsoft Edge */
     color: #C0C0C0;
 }
+=======
+.input-error {
+    color: red;
+    float: left;
+    padding-left: 13px;
+    font-size: 12px;
+    font-style: italic;
+    margin: 5px 0px;
+    transition: all .4s;
+}
+.event_custom_body_submitted {
+    padding-top: 120px;
+    padding-left: 14%;
+}
+.button_group {
+    display: block;
+    overflow: hidden;
+}
+.button-back, .button-fb-share {
+    text-align: center;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 13px;
+}
+.button-back {
+    float: left;
+    margin-right: 15px;
+    width: 30%;
+    text-align: center;
+}
+.button-fb-share {
+    width: calc(70% - 15px);
+    float: left;
+    position: relative;
+}
+
+.button-back span, .button-fb-share span {
+    background: #ff7415;
+    padding: 10px 15px;
+    color: #fff;
+    display: block;
+}
+.button-fb-share>span:before {
+    content: '';
+    position: absolute;
+    background-image: url(images/FB-Icon.png);
+    height: 27px;
+    width: 27px;
+    top: 3px;
+    background-size: cover;
+    left: 3px;
+}
+.current-form-sutmited {
+    display: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> .theirs
