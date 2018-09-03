@@ -9,11 +9,11 @@ body {
     background-image: url("images/yr_microsite_FA.jpg");
     background-position: 0 -40px;
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: 100%;
     /*background-color: #4280d3;*/
 }
 body.form-sutmited {
-    background-image: url("images/background-submited.png") !important;
+    background-image: url("images/background-submited.jpg") !important;
 }
 .event_custom_body {
     width: 100%;
@@ -21,13 +21,14 @@ body.form-sutmited {
 }
 .event-custom-form {
     padding-left: 8%;
-    width:60%;
+    width:46%;
     text-align:center;
 	margin-top:15px;
 }
 .event-custom-form >div {
-    margin-bottom: 10px;
+    /*margin-bottom: 10px;*/
     overflow: hidden;
+    padding-top:5px;
 }
 .event-custom-form input[type="text"] {
     width: 96%;
@@ -42,8 +43,14 @@ body.form-sutmited {
 }
 .event-custom-form input[type="text"]:focus,
 .event-custom-form input[type="text"]:active {
-    border-color: #a9a9ea;
+    border-color: rgba(60, 183, 255, 0.5);
+    box-shadow: 0px 3px 15px 0px rgba(60, 183, 255, 0.5), 0px -1px 8px 0px rgba(60, 183, 255, 0.5);
 }
+/*.event-custom-form input[type="text"]:focus,*/
+/*.event-custom-form input[type="text"]:active,*/
+/*.event-custom-form input[type="text"]:hover {*/
+    /**/
+/*}*/
 ::-webkit-input-placeholder {
     text-align: center;
     text-transform:uppercase;
@@ -69,7 +76,7 @@ body.form-sutmited {
     margin:auto;
 }
 .js .input-file-trigger {
-    display: block;
+        display: block;
     padding: 10px 45px;
     background: #fc7207;
     color: #fff;
@@ -78,7 +85,7 @@ body.form-sutmited {
     cursor: pointer;
     text-transform: uppercase;
     border-radius: 2px;
-    font-weight:bold;
+    font-weight: bold;
 }
 .js .input-file {
     position: absolute;
@@ -174,6 +181,9 @@ body.form-sutmited {
     float: left;
     position: relative;
 }
+.button-fb-share-center {
+    margin-left: calc(12.5% + 7.5px);
+}
 
 .button-back span, .button-fb-share span {
     background: #ff7415;
@@ -215,4 +225,7 @@ body.form-sutmited {
     background-size: cover;
 	width:100%;
 	high:100%;
+}
+.button-back-span,.button-fb-share-span {
+    cursor: pointer;
 }
