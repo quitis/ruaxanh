@@ -56,7 +56,21 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$client->resize_image($file_path,PHOTO_WIDTH,PHOTO_HEIGHT,false,$file_path);
 		$client->merge_image($file_path,$file_path,$name);
 		
-		$ID = $client->add_event_client($name,$email,$photo,$phone);
+		$objClient = $client->check_client_exist($email);
+		
+		if( empty($objClient) ){
+			$ID = $client->add_event_client($name,$email,$photo,$phone);
+		}else{
+			$ID = $objClient->ID;
+			$arFields = array(
+				'NAME' => $name,
+				'EMAIL' => $email,
+				'PHOTO' => $photo,
+				'PHONE' => $phone,
+			);
+			$client->update_client($ID,$arFields);
+		}		
+		
 		$return['data'] = array(
 			"ID" => $ID,
 			"PHOTO" => $photo
