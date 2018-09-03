@@ -54,7 +54,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$file_path = $movefile['file'];
 		
 		$client->resize_image($file_path,PHOTO_WIDTH,PHOTO_HEIGHT,false,$file_path);
-		$client->merge_image($file_path,$file_path);
+		$client->merge_image($file_path,$file_path,$name);
 		
 		$ID = $client->add_event_client($name,$email,$photo,$phone);
 		$return['data'] = array(

@@ -69,9 +69,10 @@ class Client_Api
 		imagecopyresampled($dst, $src, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
 		$image_save_func($dst, $newfile,QUALITY);
 		imagedestroy($dst);
+		imagedestroy($src);
 	}
 	
-	function merge_image($file,$newfile)
+	function merge_image($file,$newfile, $name = '')
 	{
 		
 		$infor 	 = getimagesize($file);
@@ -108,6 +109,11 @@ class Client_Api
 		imagealphablending($merged_image, true);
 
 		imagecopy($merged_image, $image2, 0, 0, 0, 0, PHOTO_WIDTH, PHOTO_HEIGHT);
+		
+		$textcolor = imagecolorallocate($merged_image, 228, 16, 71);
+		$font = get_template_directory()."/images/Franklin-Gothic-Heavy_18503.ttf";
+		imagettftext($merged_image, 15, 0, 42, 509, $textcolor, $font, strtoupper($name));
+		
 		$image_save_func($merged_image , $newfile , QUALITY);
 		imagedestroy($image1);
 		imagedestroy($image2);
