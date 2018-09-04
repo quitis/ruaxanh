@@ -23,71 +23,152 @@ if($_SERVER['REQUEST_METHOD'] === 'GET') {
 	}
 }
 if($_SERVER['REQUEST_METHOD'] === 'POST') {
-	
-	if( !isset($_POST['client_name']) || !isset($_POST['client_email'])){
-		$return['message'] = 'Missing fields';	
-		$return['code'] = -2;
-	}
-	
-	if(  $return['code']==1 ){
-		if( empty($_POST['client_name']) || empty($_POST['client_email']) ){
-			$return['message'] = 'Empty fields';
-			$return['code'] = -3;
-		}
-	}
-	
-	if(  $return['code']==1 ){
-		$client = new Client_Api();
-		$name = trim($_POST['client_name']);
-		$email = trim($_POST['client_email']);
-		$phone = isset($_POST['client_phone'])?trim($_POST['client_phone']):'';
-		
-		if ( ! function_exists( 'wp_handle_upload' ) ) {
-			require_once( ABSPATH . 'wp-admin/includes/file.php' );
-		}
-		
-		$uploadedfile = $_FILES['client_photo'];
-		
-		$allowed =  array('gif','png' ,'jpg');
-		$filename = $_FILES['client_photo']['name'];
-		$ext = pathinfo($filename, PATHINFO_EXTENSION);
-		if(!in_array($ext,$allowed) ) {
-			$return['message'] = 'Photo type must be in gif,png,jpg';
-			$return['code'] = -4;
-		}
+	if(isset($_POST['action']) && $_POST['action'] === 'sent_email') {
 
-		if( $return['code']==1 ){
-			$upload_overrides = array( 'test_form' => false );
-			$movefile = wp_handle_upload( $uploadedfile, $upload_overrides );
-			$photo = $movefile['url'];
-			$file_path = $movefile['file'];
-			
-			$client->resize_image($file_path,PHOTO_WIDTH,PHOTO_HEIGHT,false,$file_path);
-			$client->merge_image($file_path,$file_path,$name);
-			
-			$objClient = $client->check_client_exist($email);
-			
-			if( empty($objClient) ){
-				$ID = $client->add_event_client($name,$email,$photo,$phone);
-			}else{
-				$ID = $objClient->ID;
-				$arFields = array(
-					'NAME' => $name,
-					'EMAIL' => $email,
-					'PHOTO' => $photo,
-					'PHONE' => $phone,
-				);
-				$client->update_client($ID,$arFields);
-			}
-		}
-		
-		$return['data'] = array(
-			"ID" => $ID,
-			"PHOTO" => $photo
-		);
-		
-	}
+        if (!isset($_POST['client_id']) || !isset($_POST['client_id'])) {
+            $return['message'] = 'Missing fields: client_id';
+            $return['code'] = -2;
+        }
+        if ($return['code'] == 1) {
+            /*Sen mail*/
+            $client = new Client_Api();
+            $arUser = $client->get_event_client($_POST['client_id']);
+//            $arCode = $client->get_event_code_active();
+            $user_email = $arUser['EMAIL'];
+            $code = 'ON12312312';//$arCode['CODE'];
+            $template = "<html>\n";
+            $template .= "<body style=\"font-family:Verdana, Verdana, Geneva, sans-serif; font-size:12px;\">\n";
+            $template .= "<p>Hi <b>[[CLIENT_NAME]]</b></p>";
+            $template .= "<p>Chúc mừng bạn đã nhận được quà tặng từ Old Navy Việt Nam.</p>";
+            $template .= "<p>Mã code của bạn là: <b>[[EVENT_CODE]]<b></p>";
+            $template .= "<p>Vui lòng xem chi tiết áp dụng mã code theo hình bên dưới</p>";
+            $template .= "</body>\n";
+            $template .= "</html>\n";
+            $tokens = array(
+                'CLIENT_NAME' => $arUser['NAME'],
+                'EVENT_CODE' => $code,
+            );
+
+            $pattern = '[[%s]]';
+
+            $map = array();
+            foreach($tokens as $var => $value)
+            {
+                $map[sprintf($pattern, $var)] = $value;
+            }
+
+            $message = strtr($template, $map);
+
+            if(strlen($user_email) > 0 && strlen($code) > 0 || true) {
+                //Auto sent Code to client Email
+                $emailSent = send_email($user_email, "QUÀ TẶNG TỪ OLD NAVY VIỆT NAM", $message);
+                if($emailSent) {
+                    /*InActive Code*/
+//                    $client->update_event_code($arCode['ID'],array('SENT' => 'Y'));
+//                    $client->update_client_event_code($arUser['ID'],$arCode['ID']);
+                }
+            }
+        }
+    } else {
+	    /*Default Add User*/
+        if (!isset($_POST['client_name']) || !isset($_POST['client_email'])) {
+            $return['message'] = 'Missing fields';
+            $return['code'] = -2;
+        }
+
+        if ($return['code'] == 1) {
+            if (empty($_POST['client_name']) || empty($_POST['client_email'])) {
+                $return['message'] = 'Empty fields';
+                $return['code'] = -3;
+            }
+        }
+
+        if ($return['code'] == 1) {
+            $client = new Client_Api();
+            $name = trim($_POST['client_name']);
+            $email = trim($_POST['client_email']);
+            $phone = isset($_POST['client_phone']) ? trim($_POST['client_phone']) : '';
+
+            if (!function_exists('wp_handle_upload')) {
+                require_once(ABSPATH . 'wp-admin/includes/file.php');
+            }
+
+            $uploadedfile = $_FILES['client_photo'];
+
+            $allowed = array('gif', 'png', 'jpg');
+            $filename = $_FILES['client_photo']['name'];
+            $ext = pathinfo($filename, PATHINFO_EXTENSION);
+            if (!in_array($ext, $allowed)) {
+                $return['message'] = 'Photo type must be in gif,png,jpg';
+                $return['code'] = -4;
+            }
+
+            if ($return['code'] == 1) {
+                $upload_overrides = array('test_form' => false);
+                $movefile = wp_handle_upload($uploadedfile, $upload_overrides);
+                $photo = $movefile['url'];
+                $file_path = $movefile['file'];
+
+                $client->resize_image($file_path, PHOTO_WIDTH, PHOTO_HEIGHT, false, $file_path);
+                $client->merge_image($file_path, $file_path, $name);
+
+                $objClient = $client->check_client_exist($email);
+
+                if (empty($objClient)) {
+                    $ID = $client->add_event_client($name, $email, $photo, $phone);
+                } else {
+                    $ID = $objClient->ID;
+                    $arFields = array(
+                        'NAME' => $name,
+                        'EMAIL' => $email,
+                        'PHOTO' => $photo,
+                        'PHONE' => $phone,
+                    );
+                    $client->update_client($ID, $arFields);
+                }
+            }
+
+            $return['data'] = array(
+                "ID" => $ID,
+                "PHOTO" => $photo
+            );
+
+        }
+    }
 	
 }
+date_default_timezone_set("Asia/Ho_Chi_Minh");
+function send_email($to, $subject, $message, $additional_headers, $additional_parameters)
+{
+    $headers  = "From: ruaxanh<noreply@ruaxanh.com>\r\n";
+    $headers .= 'MIME-Version: 1.0' . "\n";
+    $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 
+    include_once('phpmailer/PHPMailerAutoload.php');
+    $mail = new PHPMailer;
+    $mail->IsSMTP(); // telling the class to use SMTP
+    $mail->IsHTML(true);
+    $mail->Host = "smtp.gmail.com"; // SMTP server
+    $mail->SMTPSecure = "tls";
+    $mail->Port = '587';
+    $mail->CharSet = "UTF-8";
+    $mail->SMTPAuth = true;
+    $mail->Username = 'nhatth29@gmail.com';
+    $mail->Password = 'montlight';
+    $mail->Subject = $subject;
+    $mail->From = 'admin@ruaxanh.net';
+    $mail->FromName = 'admin@ruaxanh.net';
+    $mail->AddAttachment('images/Anniversary Artwork_voucher-2.jpg');
+
+    $buffer_to = explode(',', $to);
+    foreach($buffer_to as $cus_to){
+        $mail->AddAddress($cus_to);
+    }
+
+    #$mail->AddAddress($to);
+    $mail->Body = $message;
+    $mail->Header = $additional_headers.PHP_EOL;
+    $mail->Header = $headers.PHP_EOL;
+    return $mail->send();
+}
 wp_send_json($return);
