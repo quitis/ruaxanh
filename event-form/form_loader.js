@@ -246,6 +246,7 @@ var EventFormLoader = {
 
             //File check
             let fileSize = this.files[0].size;
+            let file = this.files && this.files[0];;
             let defaulSize = 595*601;
             if(typeof _inputFileValue === 'undefined' || _inputFileValue.length == 0) {
                 _inputFileError = 'Please choose your image';
@@ -262,10 +263,6 @@ var EventFormLoader = {
                     case 'jpg':
                     case 'jpeg':
                     case 'png':
-                        // if(fileSize < defaulSize) {
-                        //     _inputFileError = 'Vui lòng sử dụng hình ảnh có kích thước 596 x 601 trở lên';
-                        //     error = true;
-                        // }
                         break;
                     default:
                         _inputFileError = 'Image is one of types: jpg, png, jpeg';
@@ -294,10 +291,29 @@ var EventFormLoader = {
                 }
                 client_photo.value = '';
             } else {
-                var fileName = event.target.files[0].name;
-                client_photo_label.innerHTML = fileName;
-                // _inputFileErrorElement.text('');
-                $('#event-custom-form').first().submit()
+                /*Check image size*/
+                if( file ) {
+                    var img = new Image();
+
+                    img.src = window.URL.createObjectURL(file);
+
+                    img.onload = function() {
+                        var width = img.naturalWidth,
+                            height = img.naturalHeight;
+                        window.URL.revokeObjectURL( img.src );
+                        let tile = parseInt(width/height * 100);
+                        if( width >= 596 && height >= 601 && tile < 105 && tile > 95) {
+                            var fileName = event.target.files[0].name;
+                            // client_photo_label.innerHTML = fileName;
+                            $('#event-custom-form').first().submit()
+                        } else {
+                            client_file_error.innerHTML = 'Hình ảnh bạn vừa đăng tải chưa phù hợp về kích thước.\n' +
+                                'Vui lòng sử dụng hình ảnh kích thước 596 x 601 pixel trở lên';
+
+                        }
+                    };
+                }
+
             }
         });
         $('#event-custom-form').submit(function(e) {
@@ -418,7 +434,7 @@ function feed_facebook_ui(link, name, description, picture) {
         }
     });
 };
-function shareOverrideOGMeta(overrideLink, overrideTitle, overrideDescription, overrideImage)
+function shareOverrideOGMeta(overrideLink, overrideTitle, overrideDescription, overrideImage,client_id)
 {
     FB.ui({
             method: 'share_open_graph',
@@ -433,8 +449,50 @@ function shareOverrideOGMeta(overrideLink, overrideTitle, overrideDescription, o
             })
         },
         function (response) {
+            if (response && !response.error_message) {
+                createModal('Cảm ơn bạn đã tham gia chương trình.<br\>Mã voucher trị giá 200.000 VND sẽ được gửi về địa chỉ email bạn đã đăng kí.<br>Vui lòng kiểm tra kĩ trong hộp thư để không bỏ lỡ quà tặng từ Old Navy nhé!');
+                $.ajax({
+                    url: 'http://ruaxanh.net/api/',
+                    type: 'POST',
+                    data: {
+                        action:'sent_email',
+                        client_id:client_id
+                    },
+                    success: function (result) {
+                        debugger;
+                        e.preventDefault();
+                    },
+                    dataType:'json'
+                });
+            } else {
+                createModal('Xảy ra lỗi, vui lòng thực hiện lại. Cảm ơn!');
+            }
             // Action after response
         });
+};
+function createModal(message) {
+    let modal = $('<div />', {class: 'modal', id: 'modal'});
+    let modalConent = $('<div />', {class: 'modal-content', id: 'modal-content'});
+    let closebtn = $('<span />', {class: 'close', id: '', text: '×'});
+    let modalBody = $('<div />', {class: 'modal-body', id: 'modal-body'});
+    let modalBodyText = $('<p />', {class: 'modal-body-text', html: message});
+
+    modalBody.append(closebtn);
+    modalBody.append(modalBodyText);
+    modalConent.append(modalBody);
+    modal.append(modalConent);
+    $('body').append(modal);
+    closebtn.click(function() {
+        modal.css("display", "none");
+        modal.remove();
+    });
+    modal.css("display", "block");
+    window.onclick = function(event) {
+        if (event.target == modal[0]) {
+            modal.css("display", "none");
+            modal.remove();
+        }
+    }
 };
 function createPictureContent(data,showBackBtn) {
     $('body').addClass('form-sutmited');
@@ -481,7 +539,7 @@ function createPictureContent(data,showBackBtn) {
     let shareBtn = $('<span />', {
         class: 'button-fb-share-span',
         text: "Share now",
-        onclick: "return shareOverrideOGMeta('"+window.location.origin + window.location.pathname+"?detail="+data.ID+"','Old Navy','KHOE KHOẢNH KHẮC WEFIE - NHẬN QUÀ VUI HẾT Ý. Tham gia ngay cùng bạn bè để nhân rộng niềm vui cùng Old Navy','"+data.PHOTO+"')",
+        onclick: "return shareOverrideOGMeta('"+window.location.origin + window.location.pathname+"?detail="+data.ID+"','KHOE KHOẢNH KHẮC WEFIE - NHẬN QUÀ VUI HẾT Ý','Tham gia ngay cùng bạn bè để nhân rộng niềm vui cùng Old Navy','"+data.PHOTO+"',"+data.ID+")",
     });
     shareBtnDiv.append(shareBtn);
     buttonDiv.append(backBtnDiv, shareBtnDiv);
