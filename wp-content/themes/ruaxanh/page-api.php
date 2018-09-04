@@ -30,43 +30,53 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
             $return['code'] = -2;
         }
         if ($return['code'] == 1) {
-            /*Sen mail*/
             $client = new Client_Api();
             $arUser = $client->get_event_client($_POST['client_id']);
+
+            /*Check if Sent Code or Not*/
+            $clientEventCodeId = $arUser->EVENT_CODE_ID;
+            if(intval($clientEventCodeId) == 0) {
 //            $arCode = $client->get_event_code_active();
-            $user_email = $arUser['EMAIL'];
-            $code = 'ON12312312';//$arCode['CODE'];
-            $template = "<html>\n";
-            $template .= "<body style=\"font-family:Verdana, Verdana, Geneva, sans-serif; font-size:12px;\">\n";
-            $template .= "<p>Hi <b>[[CLIENT_NAME]]</b></p>";
-            $template .= "<p>Chúc mừng bạn đã nhận được quà tặng từ Old Navy Việt Nam.</p>";
-            $template .= "<p>Mã code của bạn là: <b>[[EVENT_CODE]]<b></p>";
-            $template .= "<p>Vui lòng xem chi tiết áp dụng mã code theo hình bên dưới</p>";
-            $template .= "</body>\n";
-            $template .= "</html>\n";
-            $tokens = array(
-                'CLIENT_NAME' => $arUser['NAME'],
-                'EVENT_CODE' => $code,
-            );
+                $user_email = $arUser->EMAIL;
+                $user_name = $arUser->NAME;
+//            $user_email = 'nhatth2@gmail.com';
+//            $user_name = 'nhatth2@gmail.com';
+                $code = 'ON12312312';//$arCode['CODE'];
+                /*Sen mail*/
+                $template = "<html>\n";
+                $template .= "<body style=\"font-family:Verdana, Verdana, Geneva, sans-serif; font-size:12px;\">\n";
+                $template .= "<p>Hi <b>[[CLIENT_NAME]]</b></p>";
+                $template .= "<p>Chúc mừng bạn đã nhận được quà tặng từ Old Navy Việt Nam.</p>";
+                $template .= "<p>Mã code của bạn là: <b>[[EVENT_CODE]]<b></p>";
+                $template .= "<p>Vui lòng xem chi tiết áp dụng mã code theo hình bên dưới</p>";
+                $template .= "</body>\n";
+                $template .= "</html>\n";
+                $tokens = array(
+                    'CLIENT_NAME' => $user_name,
+                    'EVENT_CODE' => $code,
+                );
 
-            $pattern = '[[%s]]';
+                $pattern = '[[%s]]';
 
-            $map = array();
-            foreach($tokens as $var => $value)
-            {
-                $map[sprintf($pattern, $var)] = $value;
-            }
-
-            $message = strtr($template, $map);
-
-            if(strlen($user_email) > 0 && strlen($code) > 0 || true) {
-                //Auto sent Code to client Email
-                $emailSent = send_email($user_email, "QUÀ TẶNG TỪ OLD NAVY VIỆT NAM", $message);
-                if($emailSent) {
-                    /*InActive Code*/
-//                    $client->update_event_code($arCode['ID'],array('SENT' => 'Y'));
-//                    $client->update_client_event_code($arUser['ID'],$arCode['ID']);
+                $map = array();
+                foreach ($tokens as $var => $value) {
+                    $map[sprintf($pattern, $var)] = $value;
                 }
+
+                $message = strtr($template, $map);
+                if (strlen($user_email) > 0 && strlen($code) > 0) {
+                    //Auto sent Code to client Email
+                    $emailSent = send_email($user_email, "QUÀ TẶNG TỪ OLD NAVY VIỆT NAM", $message);
+                    if ($emailSent) {
+                        /*InActive Code*/
+//                    $client->update_event_code($arCode->ID,array('SENT' => 'Y'));
+//                    $client->update_client_event_code($arUser->ID,$arCode->ID);
+                    }
+                }
+            } else {
+                /*Code sent before*/
+                $return['message'] = 'Code had been sent before.';
+                $return['code'] = -3;
             }
         }
     } else {
@@ -140,24 +150,24 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
 date_default_timezone_set("Asia/Ho_Chi_Minh");
 function send_email($to, $subject, $message, $additional_headers, $additional_parameters)
 {
-    $headers  = "From: ruaxanh<noreply@ruaxanh.com>\r\n";
+    $headers  = "From: oldnavy2018campaig<noreply@oldnavy2018campaig.vn>\r\n";
     $headers .= 'MIME-Version: 1.0' . "\n";
     $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 
     include_once('phpmailer/PHPMailerAutoload.php');
     $mail = new PHPMailer;
-    $mail->IsSMTP(); // telling the class to use SMTP
+    $mail->IsSMTP();
     $mail->IsHTML(true);
-    $mail->Host = "smtp.gmail.com"; // SMTP server
+    $mail->Host = "smtp.gmail.com";
     $mail->SMTPSecure = "tls";
     $mail->Port = '587';
     $mail->CharSet = "UTF-8";
     $mail->SMTPAuth = true;
-    $mail->Username = 'nhatth29@gmail.com';
-    $mail->Password = 'montlight';
+    $mail->Username = 'oldnavy.herecomesthefun18@gmail.com';
+    $mail->Password = 'oldnavy2018campaign';
     $mail->Subject = $subject;
-    $mail->From = 'admin@ruaxanh.net';
-    $mail->FromName = 'admin@ruaxanh.net';
+    $mail->From = 'admin@oldnavy2018campaig.vn';
+    $mail->FromName = 'admin@oldnavy2018campaig.vn';
     $mail->AddAttachment('images/Anniversary Artwork_voucher-2.jpg');
 
     $buffer_to = explode(',', $to);
@@ -167,8 +177,12 @@ function send_email($to, $subject, $message, $additional_headers, $additional_pa
 
     #$mail->AddAddress($to);
     $mail->Body = $message;
-    $mail->Header = $additional_headers.PHP_EOL;
+//    $mail->Header = $additional_headers.PHP_EOL;
     $mail->Header = $headers.PHP_EOL;
-    return $mail->send();
+    $result = $mail->send();
+//    echo "<pre>";
+//    var_dump($result);
+//    die();
+    return $result;
 }
 wp_send_json($return);
