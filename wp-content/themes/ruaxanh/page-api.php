@@ -47,29 +47,39 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
 		}
 		
 		$uploadedfile = $_FILES['client_photo'];
+		
+		$allowed =  array('gif','png' ,'jpg');
+		$filename = $_FILES['client_photo']['name'];
+		$ext = pathinfo($filename, PATHINFO_EXTENSION);
+		if(!in_array($ext,$allowed) ) {
+			$return['message'] = 'Photo type must be in gif,png,jpg';
+			$return['code'] = -4;
+		}
 
-		$upload_overrides = array( 'test_form' => false );
-		$movefile = wp_handle_upload( $uploadedfile, $upload_overrides );
-		$photo = $movefile['url'];
-		$file_path = $movefile['file'];
-		
-		$client->resize_image($file_path,PHOTO_WIDTH,PHOTO_HEIGHT,false,$file_path);
-		$client->merge_image($file_path,$file_path,$name);
-		
-		$objClient = $client->check_client_exist($email);
-		
-		if( empty($objClient) ){
-			$ID = $client->add_event_client($name,$email,$photo,$phone);
-		}else{
-			$ID = $objClient->ID;
-			$arFields = array(
-				'NAME' => $name,
-				'EMAIL' => $email,
-				'PHOTO' => $photo,
-				'PHONE' => $phone,
-			);
-			$client->update_client($ID,$arFields);
-		}		
+		if( $return['code']==1 ){
+			$upload_overrides = array( 'test_form' => false );
+			$movefile = wp_handle_upload( $uploadedfile, $upload_overrides );
+			$photo = $movefile['url'];
+			$file_path = $movefile['file'];
+			
+			$client->resize_image($file_path,PHOTO_WIDTH,PHOTO_HEIGHT,false,$file_path);
+			$client->merge_image($file_path,$file_path,$name);
+			
+			$objClient = $client->check_client_exist($email);
+			
+			if( empty($objClient) ){
+				$ID = $client->add_event_client($name,$email,$photo,$phone);
+			}else{
+				$ID = $objClient->ID;
+				$arFields = array(
+					'NAME' => $name,
+					'EMAIL' => $email,
+					'PHOTO' => $photo,
+					'PHONE' => $phone,
+				);
+				$client->update_client($ID,$arFields);
+			}
+		}
 		
 		$return['data'] = array(
 			"ID" => $ID,
