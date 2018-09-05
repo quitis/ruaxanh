@@ -194,7 +194,7 @@ class Client_Api
         $arField = array('CODE','NOTE','IS_SENT');
         $arUpdate = array();
         foreach($arFields as $_key => $value) {
-            if(key_exists($_key,$arField) && strlen($value) > 0) {
+            if(in_array($_key,$arField) && strlen($value) > 0) {
                 $arUpdate[$_key] = $value;
             }
         }

@@ -36,12 +36,10 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
             /*Check if Sent Code or Not*/
             $clientEventCodeId = $arUser->EVENT_CODE_ID;
             if(intval($clientEventCodeId) == 0) {
-//            $arCode = $client->get_event_code_active();
+                $arCode = $client->get_event_code_active();
                 $user_email = $arUser->EMAIL;
                 $user_name = $arUser->NAME;
-//            $user_email = 'nhatth2@gmail.com';
-//            $user_name = 'nhatth2@gmail.com';
-                $code = 'ON12312312';//$arCode['CODE'];
+                $code = $arCode->CODE;
                 /*Sen mail*/
                 $template = "<html>\n";
                 $template .= "<body style=\"font-family:Verdana, Verdana, Geneva, sans-serif; font-size:12px;\">\n";
@@ -66,12 +64,15 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $message = strtr($template, $map);
                 if (strlen($user_email) > 0 && strlen($code) > 0) {
                     //Auto sent Code to client Email
-                    $emailSent = send_email($user_email, "QUÀ TẶNG TỪ OLD NAVY VIỆT NAM", $message);
+                    $emailSent = send_email_auto($user_email, "QUÀ TẶNG TỪ OLD NAVY VIỆT NAM", $message);
                     if ($emailSent) {
                         /*InActive Code*/
-//                    $client->update_event_code($arCode->ID,array('SENT' => 'Y'));
-//                    $client->update_client_event_code($arUser->ID,$arCode->ID);
+                    $client->update_event_code($arCode->ID,array('IS_SENT' => 'Y'));
+                    $client->update_client_event_code($arUser->ID,$arCode->ID);
                     }
+                } else {
+                    $return['message'] = 'Email or Code is not exist.';
+                    $return['code'] = -2;
                 }
             } else {
                 /*Code sent before*/
@@ -148,13 +149,13 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
 	
 }
 date_default_timezone_set("Asia/Ho_Chi_Minh");
-function send_email($to, $subject, $message, $additional_headers, $additional_parameters)
+function send_email_auto($to, $subject, $message, $additional_headers, $additional_parameters)
 {
     $headers  = "From: oldnavy2018campaig<noreply@oldnavy2018campaig.vn>\r\n";
     $headers .= 'MIME-Version: 1.0' . "\n";
     $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 
-    include_once('phpmailer/PHPMailerAutoload.php');
+    include_once(get_template_directory().'/phpmailer/PHPMailerAutoload.php');
     $mail = new PHPMailer;
     $mail->IsSMTP();
     $mail->IsHTML(true);
@@ -168,21 +169,13 @@ function send_email($to, $subject, $message, $additional_headers, $additional_pa
     $mail->Subject = $subject;
     $mail->From = 'admin@oldnavy2018campaig.vn';
     $mail->FromName = 'admin@oldnavy2018campaig.vn';
-    $mail->AddAttachment('images/Anniversary Artwork_voucher-2.jpg');
+    $mail->AddAttachment(get_template_directory().'/images/Anniversary Artwork_voucher-2.jpg');
 
-    $buffer_to = explode(',', $to);
-    foreach($buffer_to as $cus_to){
-        $mail->AddAddress($cus_to);
-    }
-
-    #$mail->AddAddress($to);
+    $mail->AddAddress($to);
     $mail->Body = $message;
-//    $mail->Header = $additional_headers.PHP_EOL;
+    // $mail->Header = $additional_headers.PHP_EOL;
     $mail->Header = $headers.PHP_EOL;
     $result = $mail->send();
-//    echo "<pre>";
-//    var_dump($result);
-//    die();
     return $result;
 }
 wp_send_json($return);

@@ -459,8 +459,11 @@ function shareOverrideOGMeta(overrideLink, overrideTitle, overrideDescription, o
                         client_id:client_id
                     },
                     success: function (result) {
-                        debugger;
-                        e.preventDefault();
+                        if(result.CODE == 1) {
+                            console.log("SENT EMAIL SUCCESS");
+                        } else {
+                            console.log("Error EMAIL SUCCESS")
+                        }
                     },
                     dataType:'json'
                 });
