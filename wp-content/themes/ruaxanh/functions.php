@@ -79,6 +79,9 @@ class Client_Api
 				throw new Exception('Unknown image type.');
 		}
 		
+		$width = ($width>PHOTO_WIDTH)?PHOTO_WIDTH:$width;
+		$height = ($height>PHOTO_HEIGHT)?PHOTO_HEIGHT:$height;
+		
 		$img_r = imagecreatefromjpeg($file);
 		$dst_r = ImageCreateTrueColor( PHOTO_WIDTH, PHOTO_HEIGHT );
 		imagecopyresampled($dst_r,$img_r,0,0,$pos_x,$pos_y,
