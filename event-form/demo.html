@@ -28,7 +28,7 @@
         }(document, 'script', 'facebook-jssdk'));
         var objectAguement = {"type":"inline"};
         var desire = location.search.split("&")[0].replace("?","").split("=");
-		for (let i = 0;i <= desire.length;i++) {
+		for (var i = 0;i <= desire.length;i++) {
 		    if(desire[i] === 'detail' && parseInt(desire[i + 1])>0) {
                 objectAguement.user_id = parseInt(desire[i + 1]);
                 break;

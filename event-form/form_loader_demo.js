@@ -9,9 +9,20 @@ var EventFormLoader = {
         var link  		= document.createElement('link')
         link.rel  			= 'stylesheet';
         link.type 		= 'text/css';
-        link.href 		= 'http://ruaxanh.net/event-form/custom_style_v2.css';
+        link.href 		= 'http://ruaxanh.net/event-form/custom_style_v2.css?v=06090935';
         link.media 	= 'all';
         head.appendChild(link);
+
+        /*
+        * Crop
+        * */
+        var linkCropCss  		= document.createElement('link')
+        linkCropCss.rel  			= 'stylesheet';
+        linkCropCss.type 		= 'text/css';
+        linkCropCss.href 		= 'http://ruaxanh.net/event-form/css/jquery.Jcrop.css?v=06090935';
+        linkCropCss.media 	= 'all';
+        head.appendChild(linkCropCss);
+
         document.title = "Old Navy";
 
 		var startingTime = new Date().getTime();
@@ -20,6 +31,8 @@ var EventFormLoader = {
 		script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js';
 		script.type = 'text/javascript';
 		document.getElementsByTagName("head")[0].appendChild(script);
+
+
 
 		// Poll for jQuery to come into existance
 		var checkReady = function(callback) {
@@ -32,6 +45,10 @@ var EventFormLoader = {
 		};
 		// Start polling...
 		checkReady(function($) {
+            var scriptcrop = document.createElement("SCRIPT");
+            scriptcrop.src = 'http://ruaxanh.net/event-form/js/jquery.Jcrop.js?v=06090935';
+            scriptcrop.type = 'text/javascript';
+            document.getElementsByTagName("head")[0].appendChild(scriptcrop);
 			$(function() {
 				var params = window[window.EventFormObject].forms[0];
                 var user_id = params.user_id;
@@ -124,6 +141,28 @@ var EventFormLoader = {
         od_form.className = "event-custom-form";
         od_form.id = "event-custom-form";
         od_form.setAttribute("id", "event-custom-form");
+        //Crop Parameter
+        var _x = document.createElement('input');
+        _x.type 	= "hidden";
+        _x.name = "photo_x";
+        _x.setAttribute("id", "photo_x");
+        var _y = document.createElement('input');
+        _y.type 	= "hidden";
+        _y.name = "photo_y";
+        _y.setAttribute("id", "photo_y");
+        var _w = document.createElement('input');
+        _w.type 	= "hidden";
+        _w.name = "photo_w";
+        _w.setAttribute("id", "photo_w");
+        var _h = document.createElement('input');
+        _h.type 	= "hidden";
+        _h.name = "photo_h";
+        _h.setAttribute("id", "photo_h");
+
+        od_form.append(_x);
+        od_form.append(_y);
+        od_form.append(_w);
+        od_form.append(_h);
 
         //client name
         var div		= document.createElement('div');
@@ -188,11 +227,15 @@ var EventFormLoader = {
         client_photo_label.innerHTML  	= "Upload Image";
         div2.appendChild(client_photo_label);
 
+        var client_photo_img = document.createElement('img');
+        div2.appendChild(client_photo_img);
+
         var client_file_notify  = document.createElement('label');
         client_file_notify.id = "client_file_notify";
         client_file_notify.setAttribute("class", "client_file_notify");
-        client_file_notify.innerHTML = "Nên sử dụng hình ảnh kích cỡ vuông.";
-        div2.appendChild(client_file_notify);
+        client_file_notify.innerHTML = "* Lưu ý:<br/>- Nên sử dụng hình ảnh kích cỡ vuông.<br/>"+
+        "- Nếu iPhone/iPad của bạn chưa load được hình, vui lòng làm theo hướng dẫn sau:<br>"+
+        "Vào <b>Setting</b> > <b>Photo</b> > Chọn <b>Automatic</b> trong trường <b>TRANFER TO MAC OR PC</b> để chuyển đổi hình sang định dạng .jpg";
 
         var client_file_error  = document.createElement('label');
         client_file_error.id = "client_file_error";
@@ -200,6 +243,7 @@ var EventFormLoader = {
         div2.appendChild(client_file_error);
 
         div.appendChild(div2);
+        div.appendChild(client_file_notify);
         od_form.appendChild(div);
 
         od_div2.appendChild(od_form);
@@ -268,11 +312,11 @@ var EventFormLoader = {
                 switch (extension) {
                     case 'jpg':
                     case 'jpeg':
-                    case 'gif':
                     case 'png':
+                    case 'gif':
                         break;
                     default:
-                        _inputFileError = 'Image is one of types: jpg, png, jpeg, gif';
+                        _inputFileError = 'Image is one of types: jpg, png, jpeg';
                         error = true;
                 }
             }
@@ -299,41 +343,36 @@ var EventFormLoader = {
                 client_photo.value = '';
             } else {
                 /*Check image size*/
-                $('#event-custom-form').first().submit();
-
-                /*
                 if( file ) {
                     var img = new Image();
-
                     img.src = window.URL.createObjectURL(file);
-
+                    img.id="img-after-upload";
                     img.onload = function() {
-                        var width = img.naturalWidth,
-                            height = img.naturalHeight;
-                        window.URL.revokeObjectURL( img.src );
-                        var tile = parseInt(width/height * 100);
-                        if( width >= 596 && height >= 601 && tile < 105 && tile > 95) {
-                            var fileName = event.target.files[0].name;
-                            // client_photo_label.innerHTML = fileName;
-                            $('#event-custom-form').first().submit()
-                        } else {
-                            client_file_error.innerHTML = 'Hình ảnh bạn vừa đăng tải chưa phù hợp về kích thước.\n' +
-                                'Vui lòng sử dụng hình ảnh kích thước 596 x 601 pixel trở lên';
-
-                        }
-                    };  
+                        createModalCrop(img);
+                        //     var tile = parseInt(width/height * 100);
+                    //     if( width >= 596 && height >= 601 && tile < 105 && tile > 95) {
+                    //         var fileName = event.target.files[0].name;
+                    //         // client_photo_label.innerHTML = fileName;
+                    //     } else {
+                    //         client_file_error.innerHTML = 'Hình ảnh bạn vừa đăng tải chưa phù hợp về kích thước.\n' +
+                    //             'Vui lòng sử dụng hình ảnh kích thước 596 x 601 pixel trở lên';
+                    //
+                    //     }
+                    };
                 }
-                */
+
 
             }
         });
         $('#event-custom-form').submit(function(e) {
+            var waitModal = createModal("Đang xử lý. Vui lòng đợi",false);
             var formData = new FormData(this);
             $.ajax({
                 url: 'http://ruaxanh.net/api/',
                 type: 'POST',
                 data: formData,
                 success: function (result) {
+                    waitModal.remove();
                     // result = JSON.parse(result);
                     var code = result.code;
                     var data = result.data;
@@ -376,7 +415,7 @@ var EventFormLoader = {
 		else
 		{
 			el.attachEvent('on' + eventName, handler);
-		}		
+		}
 	},
 	addEventHandler: function(target, eventName, handler)
 	{
@@ -447,6 +486,7 @@ function feed_facebook_ui(link, name, description, picture) {
 };
 function shareOverrideOGMeta(overrideLink, overrideTitle, overrideDescription, overrideImage,client_id)
 {
+    var waitModal = createModal("Đang xử lý. Vui lòng đợi",false);
     FB.ui({
             method: 'share_open_graph',
             action_type: 'og.shares',
@@ -460,8 +500,9 @@ function shareOverrideOGMeta(overrideLink, overrideTitle, overrideDescription, o
             })
         },
         function (response) {
+            waitModal.remove();
             if (response && !response.error_message) {
-                createModal('Cảm ơn bạn đã tham gia chương trình.<br\>Mã voucher trị giá 200.000 VND sẽ được gửi về địa chỉ email bạn đã đăng kí.<br>Vui lòng kiểm tra kĩ trong hộp thư để không bỏ lỡ quà tặng từ Old Navy nhé!');
+                var emailModal = createModal("Đang  gửi voucher về địa chỉ email bạn đã đăng kí.<br\> Vui lòng đợi.",false);
                 $.ajax({
                     url: 'http://ruaxanh.net/api/',
                     type: 'POST',
@@ -470,10 +511,13 @@ function shareOverrideOGMeta(overrideLink, overrideTitle, overrideDescription, o
                         client_id:client_id
                     },
                     success: function (result) {
-                        if(result.CODE == 1) {
-                            console.log("SENT EMAIL SUCCESS");
+                        emailModal.remove;
+                        if(result.code == 1) {
+                            createModal('Cảm ơn bạn đã tham gia chương trình.<br\>Mã voucher trị giá 200.000 VND sẽ được gửi về địa chỉ email bạn đã đăng kí.<br>Vui lòng kiểm tra kĩ trong hộp thư để không bỏ lỡ quà tặng từ Old Navy nhé!');
+                        } else if(result.code == -3){
+                            createModal(result.message)
                         } else {
-                            console.log("Error EMAIL SUCCESS")
+                            console.log("Error: " + result.message);
                         }
                     },
                     dataType:'json'
@@ -484,30 +528,98 @@ function shareOverrideOGMeta(overrideLink, overrideTitle, overrideDescription, o
             // Action after response
         });
 };
-function createModal(message) {
+function createModal(message,candelete = true ) {
     var modal = $('<div />', {class: 'modal', id: 'modal'});
     var modalConent = $('<div />', {class: 'modal-content', id: 'modal-content'});
-    var closebtn = $('<span />', {class: 'close', id: '', text: '×'});
     var modalBody = $('<div />', {class: 'modal-body', id: 'modal-body'});
     var modalBodyText = $('<p />', {class: 'modal-body-text', html: message});
-
-    modalBody.append(closebtn);
+    if(candelete) {
+        var closebtn = $('<span />', {class: 'close', id: '', text: '×'});
+        modalBody.append(closebtn);
+    }
     modalBody.append(modalBodyText);
     modalConent.append(modalBody);
     modal.append(modalConent);
     $('body').append(modal);
-    closebtn.click(function() {
+    if(candelete) {
+        closebtn.click(function () {
+            modal.css("display", "none");
+            modal.remove();
+        });
+        window.onclick = function (event) {
+            if (event.target == modal[0]) {
+                modal.css("display", "none");
+                modal.remove();
+            }
+        }
+    }
+    modal.css("display", "block");
+    return modal;
+
+};
+function createModalCrop(img) {
+    window_height = $(window).height();
+    // $(document).height();
+    window_width = $(window).width();
+    // $(document).width();
+    var width = img.naturalWidth,
+        height = img.naturalHeight;
+    var paddingtop_modal = (window_height - height)/2 > 0?(window_height - height)/2 :0;
+
+        var modal = $('<div />', {class: 'modal', id: 'modal'}).css('padding-top', paddingtop_modal + "px");
+    var modalConent = $('<div />', {class: 'modal-content', id: 'modal-content',width: width}).css('max-height',window_height+40+'px');;
+    var closebtn = $('<span />', {class: 'close', id: '', text: '×'});
+    var modalBody = $('<div />', {class: 'modal-body  modal-content-img', id: 'modal-body',height:height,width: width}).css('max-height',window_height+'px');
+    var modalBodyImg = $('<img />', {id:'img-after-upload',class: 'modal-body-img', src: img.src, height:'300px'});
+    var modalFooter = $('<div />', {id:'modal-footer',class: 'modal-footer'});
+    var modalButon = $('<button />', {id:'submit-form',class: 'submit-form-btn',value:'Finish', text:'Finish'});
+
+    modalButon.click(function(){
         modal.css("display", "none");
+        window.URL.revokeObjectURL(img.src);
+        modal.remove();
+        $('#event-custom-form').first().submit();
+        return;
+    });
+    modalConent.append(closebtn);
+    modalBody.append(modalBodyImg);
+    modalFooter.append(modalButon);
+    modalConent.append(modalBody);
+    modalConent.append(modalFooter);
+    modal.append(modalConent);
+    $('body').append(modal);
+    $('#img-after-upload').Jcrop({
+        aspectRatio: 1,
+        maxSize:[595,605],
+        min:[595,605],
+        onSelect: updateCoords,
+        onChange: updateCoords
+    },function(){
+        jcrop_api = this;
+        jcrop_api.animateTo([1,1,595,605]);
+    });
+
+
+
+    closebtn.click(function () {
+        modal.css("display", "none");
+        client_photo.value = '';
+        window.URL.revokeObjectURL( img.src );
+        resetCoords();
         modal.remove();
     });
     modal.css("display", "block");
-    window.onclick = function(event) {
-        if (event.target == modal[0]) {
-            modal.css("display", "none");
-            modal.remove();
-        }
-    }
-};
+    // window.onclick = function (event) {
+    //     if (event.target == modal[0]) {
+    //         modal.css("display", "none");
+    //         client_photo.value = '';
+    //         resetCoords();
+    //         window.URL.revokeObjectURL( img.src );
+    //         modal.remove();
+    //
+    //     }
+    // }
+}
 function createPictureContent(data,showBackBtn) {
     $('body').addClass('form-sutmited');
     var od_div = document.getElementById('event_custom_body_od_div');
@@ -562,5 +674,25 @@ function createPictureContent(data,showBackBtn) {
     __div.append(img_div);
     $('body').append(__div);
 }
+function updateCoords(c)
+{
+    $('#photo_x').val(c.x);
+    $('#photo_y').val(c.y);
+    $('#photo_w').val(c.w);
+    $('#photo_h').val(c.h);
+};
+function resetCoords() {
+    $('#photo_x').val(0);
+    $('#photo_y').val(0);
+    $('#photo_w').val(0);
+    $('#photo_h').val(0);
+}
+
+function checkCoords()
+{
+    if (parseInt($('#photo_w').val())) return true;
+    alert('Please select a crop region then press submit.');
+    return false;
+};
 
 EventFormLoader.init();
