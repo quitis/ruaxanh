@@ -39,6 +39,14 @@ require 'includes/admin-menu.php';
 			return $arResult;
 		}
 		
+		function get_total( $arFilter = array() )
+		{
+			global $wpdb;
+			$sWhere = $this->buildCondition($arFilter);
+			$total_row = $wpdb->get_var( "SELECT COUNT(*) FROM ruaxanh_event_clients".$sWhere );
+			return $total_row;
+		}
+		
 		function paging( $arFilter = array() )
 		{
 			global $wpdb;
@@ -66,7 +74,7 @@ require 'includes/admin-menu.php';
 					$links[] = $paged + 2;
 					$links[] = $paged + 1;
 				}
-				echo $cur_url = get_site_url()."/wp-admin/admin.php?page=event-client";
+				$cur_url = get_site_url()."/wp-admin/admin.php?page=event-client";
 				//$cur_url = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 				
 				sort( $links );

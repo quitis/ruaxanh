@@ -43,12 +43,14 @@ function show_event_client()
 		$arFilter['date']['to'] = trim($_REQUEST['usr_dateto']);
 	}
 	$clients = $mfpd->event_list($arFilter);
+	$total = $mfpd->get_total($arFilter);
 		
 	$paging = $mfpd->paging($arFilter);
 	$mfpd->view( 'event-client', array(
 		'clients' => $clients,
 		'paging' => $paging,
-		'filter' => $arFilter
+		'filter' => $arFilter,
+		'total' => $total
 	) );
 }
  

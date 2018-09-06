@@ -81,7 +81,10 @@ $cur_url = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
     </tbody>
   </table>
 	<div class="navigation">
-		<ul>
+		<span class="btn btn-warning btn-excel" style="float: left;margin-right: 20px;margin-top: -7px;">
+			<strong>Total</strong> : <?php echo $total; ?>
+		</span>
+		<ul style="float:left;">
 				<?php echo $paging; ?>
 		</ul>
 	</div>
