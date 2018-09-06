@@ -30,17 +30,6 @@ class Client_Api
 			array( 'ID' => $ID )
 		);
 	}
-
-	function update_client_event_code($ID, $CODE_ID) {
-        global $wpdb;
-        $wpdb->update(
-            'ruaxanh_event_clients',
-            array(
-                'EVENT_CODE_ID' => $CODE_ID,
-            ),
-            array( 'ID' => $ID )
-        );
-    }
 	
 	function get_event_client($id)
 	{
@@ -58,6 +47,45 @@ class Client_Api
 		$arResult = Array();
 		$arResult = $wpdb->get_row($sSQL);
 		return $arResult;
+	}
+	
+	/*
+	* $file : path of original file
+	* $pos_x : x position of crop area
+	* $pos_y : y position of crop area
+	* $width : width of crop area (fix 596px)
+	* $height : height of crop area (fix 601px)
+	* $newfile : path of new file after crop
+	*/
+	function crop_image($file,$pos_x,$pos_y,$width,$height, $newfile = '')
+	{
+		$infor 	 = getimagesize($file);
+		$mime  = $infor['mime'];
+		
+		switch ($mime) {
+			case 'image/jpeg':
+				$image_create_func = 'imagecreatefromjpeg';
+				$image_save_func = 'imagejpeg';
+				break;
+			case 'image/png':
+				$image_create_func = 'imagecreatefrompng';
+				$image_save_func = 'imagepng';
+				break;
+			case 'image/gif':
+				$image_create_func = 'imagecreatefromgif';
+				$image_save_func = 'imagegif';
+				break;
+			default: 
+				throw new Exception('Unknown image type.');
+		}
+		
+		$img_r = imagecreatefromjpeg($file);
+		$dst_r = ImageCreateTrueColor( PHOTO_WIDTH, PHOTO_HEIGHT );
+		imagecopyresampled($dst_r,$img_r,0,0,$pos_x,$pos_y,
+	PHOTO_WIDTH,PHOTO_HEIGHT,$width,$height);
+		imagejpeg($dst_r,$newfile,QUALITY);
+		imagedestroy($img_r);
+		imagedestroy($dst_r);
 	}
 	
 	function resize_image($file, $w, $h, $crop=FALSE,$newfile='') 
@@ -157,56 +185,5 @@ class Client_Api
 		imagedestroy($image2);
 		imagedestroy($merged_image);
 	}
-
-    function get_event_code_client( $name,$email,$photo,$phone='' )
-    {
-        global $wpdb;
-        $wpdb->insert(
-            'ruaxanh_event_code',
-            array(
-                'NAME' => $name,
-                'EMAIL' => $email,
-                'PHOTO' => $photo,
-                'PHONE' => $phone,
-            ));
-        return $wpdb->insert_id;
-    }
-
-    function get_event_code_by_id($id)
-    {
-        global $wpdb;
-        $sSQL = "SELECT * FROM ruaxanh_event_code where ID = " . $id;
-        $arResult = Array();
-        $arResult = $wpdb->get_row($sSQL);
-        return $arResult;
-    }
-    function get_event_code_active()
-    {
-        global $wpdb;
-        $sSQL = "SELECT * FROM ruaxanh_event_code where IS_SENT = 'N' LIMIT 1";
-        $arResult = Array();
-        $arResult = $wpdb->get_row($sSQL);
-        return $arResult;
-    }
-    function update_event_code($ID, $arFields)
-    {
-        global $wpdb;
-        $arField = array('CODE','NOTE','IS_SENT');
-        $arUpdate = array();
-        foreach($arFields as $_key => $value) {
-            if(in_array($_key,$arField) && strlen($value) > 0) {
-                $arUpdate[$_key] = $value;
-            }
-        }
-        if(!empty($arUpdate)) {
-            $wpdb->update(
-                'ruaxanh_event_code',
-                $arUpdate,
-                array('ID' => $ID)
-            );
-        } else {
-            return true;
-        }
-    }
 	
 }
