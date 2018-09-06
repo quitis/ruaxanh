@@ -39,6 +39,21 @@ require 'includes/admin-menu.php';
 			return $arResult;
 		}
 		
+		function get_for_csv( $arFilter = array(), $arSort = array() )
+		{
+			global $wpdb;
+			
+			$sWhere = $this->buildCondition($arFilter);
+			
+			$sSQL = "SELECT cl.*,co.CODE FROM ruaxanh_event_clients cl
+				LEFT JOIN ruaxanh_event_code co ON cl.EVENT_CODE_ID = co.ID
+			".$sWhere." ORDER BY cl.ADD_DATE DESC";
+			$arResult = Array();
+			$arResult = $wpdb->get_results($sSQL);
+			
+			return $arResult;
+		}
+		
 		function get_total( $arFilter = array() )
 		{
 			global $wpdb;

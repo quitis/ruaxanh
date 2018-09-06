@@ -85,15 +85,16 @@ function export_csv()
 		if( isset($_REQUEST['usr_dateto']) ){
 			$arFilter['date']['to'] = trim($_REQUEST['usr_dateto']);
 		}
-		$clients = $mfpd->event_list($arFilter);
+		$clients = $mfpd->get_for_csv($arFilter);
 		
-		$sCSV = "Name,Email,Phone,Date\r\n";
+		$sCSV = "Name,Email,Phone,Date,Code\r\n";
 		
 		foreach($clients as $client){
 			$sCSV .= $client->NAME.",";
 			$sCSV .= $client->EMAIL.",";
 			$sCSV .= $client->PHONE.",";
-			$sCSV .= date('d/m/Y h:m A', strtotime($client->ADD_DATE))."\r\n";
+			$sCSV .= date('d/m/Y h:m A', strtotime($client->ADD_DATE)).",";
+			$sCSV .= $client->CODE."\r\n";
 		}
 		
 		header("Pragma: public");
