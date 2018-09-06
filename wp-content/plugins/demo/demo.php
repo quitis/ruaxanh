@@ -30,7 +30,9 @@ require 'includes/admin-menu.php';
 			
 			$sWhere = $this->buildCondition($arFilter);
 			
-			$sSQL = "SELECT * FROM ruaxanh_event_clients ".$sWhere." ORDER BY ADD_DATE DESC LIMIT ".$start.",".$this->page_size;
+			$sSQL = "SELECT cl.*,co.CODE FROM ruaxanh_event_clients cl
+				LEFT JOIN ruaxanh_event_code co ON cl.EVENT_CODE_ID = co.ID
+			".$sWhere." ORDER BY cl.ADD_DATE DESC LIMIT ".$start.",".$this->page_size;
 			$arResult = Array();
 			$arResult = $wpdb->get_results($sSQL);
 			

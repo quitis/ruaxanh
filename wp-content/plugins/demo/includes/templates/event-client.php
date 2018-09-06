@@ -62,6 +62,7 @@ $cur_url = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 		 <th>Số điện thoại</th>
 		 <th>Hình ảnh</th>
         <th>Thời gian</th>
+		<th>Mã dự thưởng</th>
       </tr>
     </thead>
     <tbody>
@@ -74,6 +75,7 @@ $cur_url = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 	<td><?php echo $client->PHONE; ?></td>
 	<td><img src="<?php echo $client->PHOTO; ?>" width="100px" /></td>
 	<td><?php echo date('d/m/Y h:m A', strtotime($client->ADD_DATE)); ?></td>
+	<td><?php echo $client->CODE; ?></td>
 	</tr>
 	<?php } ?>
     </tbody>
