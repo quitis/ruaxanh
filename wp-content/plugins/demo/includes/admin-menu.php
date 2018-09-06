@@ -19,6 +19,10 @@ function show_event_client()
 	
 	$arFilter = array();
 	
+	if( isset($_REQUEST['p']) ){
+		$arFilter['current_page'] = trim($_REQUEST['p']);
+	}
+	
 	if( isset($_REQUEST['usr_name']) ){
 		$arFilter['usr_name'] = trim($_REQUEST['usr_name']);
 	}
@@ -39,14 +43,7 @@ function show_event_client()
 		$arFilter['date']['to'] = trim($_REQUEST['usr_dateto']);
 	}
 	$clients = $mfpd->event_list($arFilter);
-	
-	if( isset($_REQUEST['export']) && $_REQUEST['export']==1 ){
-		//echo $file_name = plugin_dir_path(__FILE__).'data_'.time().'.csv';
-		$file_name ='data_'.time().'.csv'; 
-		//file_put_contents($file_name,$CSV->buildDoc);
-		wp_send_json(array());
-	}
-	
+		
 	$paging = $mfpd->paging($arFilter);
 	$mfpd->view( 'event-client', array(
 		'clients' => $clients,
@@ -61,7 +58,7 @@ add_action('admin_init', 'export_csv');
 
 function export_csv()
 {
-	if( $_REQUEST['page']=='event-client' && isset($_REQUEST['export']) && $_REQUEST['export']==1 ){
+	if( isset($_REQUEST['page']) && $_REQUEST['page']=='event-client' && isset($_REQUEST['export']) && $_REQUEST['export']==1 ){
 		
 		$mfpd = new Demo();
 	

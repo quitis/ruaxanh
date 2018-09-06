@@ -30,7 +30,7 @@ require 'includes/admin-menu.php';
 			
 			$sWhere = $this->buildCondition($arFilter);
 			
-			$sSQL = "SELECT * FROM ruaxanh_event_clients ".$sWhere." LIMIT ".$start.",".$this->page_size;
+			$sSQL = "SELECT * FROM ruaxanh_event_clients ".$sWhere." ORDER BY ADD_DATE DESC LIMIT ".$start.",".$this->page_size;
 			$arResult = Array();
 			$arResult = $wpdb->get_results($sSQL);
 			
@@ -64,8 +64,8 @@ require 'includes/admin-menu.php';
 					$links[] = $paged + 2;
 					$links[] = $paged + 1;
 				}
-				
-				$cur_url = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+				echo $cur_url = get_site_url()."/wp-admin/admin.php?page=event-client";
+				//$cur_url = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 				
 				sort( $links );
 				
