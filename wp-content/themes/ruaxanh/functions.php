@@ -30,6 +30,17 @@ class Client_Api
 			array( 'ID' => $ID )
 		);
 	}
+
+	function update_client_event_code($ID, $CODE_ID) {
+        global $wpdb;
+        $wpdb->update(
+            'ruaxanh_event_clients',
+            array(
+                'EVENT_CODE_ID' => $CODE_ID,
+            ),
+            array( 'ID' => $ID )
+        );
+    }
 	
 	function get_event_client($id)
 	{
@@ -188,5 +199,56 @@ class Client_Api
 		imagedestroy($image2);
 		imagedestroy($merged_image);
 	}
+
+    function get_event_code_client( $name,$email,$photo,$phone='' )
+    {
+        global $wpdb;
+        $wpdb->insert(
+            'ruaxanh_event_code',
+            array(
+                'NAME' => $name,
+                'EMAIL' => $email,
+                'PHOTO' => $photo,
+                'PHONE' => $phone,
+            ));
+        return $wpdb->insert_id;
+    }
+
+    function get_event_code_by_id($id)
+    {
+        global $wpdb;
+        $sSQL = "SELECT * FROM ruaxanh_event_code where ID = " . $id;
+        $arResult = Array();
+        $arResult = $wpdb->get_row($sSQL);
+        return $arResult;
+    }
+    function get_event_code_active()
+    {
+        global $wpdb;
+        $sSQL = "SELECT * FROM ruaxanh_event_code where IS_SENT = 'N' LIMIT 1";
+        $arResult = Array();
+        $arResult = $wpdb->get_row($sSQL);
+        return $arResult;
+    }
+    function update_event_code($ID, $arFields)
+    {
+        global $wpdb;
+        $arField = array('CODE','NOTE','IS_SENT');
+        $arUpdate = array();
+        foreach($arFields as $_key => $value) {
+            if(in_array($_key,$arField) && strlen($value) > 0) {
+                $arUpdate[$_key] = $value;
+            }
+        }
+        if(!empty($arUpdate)) {
+            $wpdb->update(
+                'ruaxanh_event_code',
+                $arUpdate,
+                array('ID' => $ID)
+            );
+        } else {
+            return true;
+        }
+    }
 	
 }
