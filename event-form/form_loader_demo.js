@@ -9,7 +9,7 @@ var EventFormLoader = {
         var link  		= document.createElement('link')
         link.rel  			= 'stylesheet';
         link.type 		= 'text/css';
-        link.href 		= 'http://ruaxanh.net/event-form/custom_style_v2.css?v=06090935';
+        link.href 		= 'http://ruaxanh.net/event-form/custom_style_v2.css';
         link.media 	= 'all';
         head.appendChild(link);
         document.title = "Old Navy";
@@ -33,9 +33,9 @@ var EventFormLoader = {
 		// Start polling...
 		checkReady(function($) {
 			$(function() {
-				let params = window[window.EventFormObject].forms[0];
-                let user_id = params.user_id;
-                let bLoadForm = false;
+				var params = window[window.EventFormObject].forms[0];
+                var user_id = params.user_id;
+                var bLoadForm = false;
                 if(user_id > 0) {
                     $.ajax({
                         url: 'http://ruaxanh.net/api/',
@@ -43,7 +43,7 @@ var EventFormLoader = {
                         data: {id: user_id},
                         success: function (result) {
                             if (result.code === 1) {
-                                let user_data = result.data;
+                                var user_data = result.data;
                                 document.title = "Detail " + user_data.NAME;
                                 createPictureContent(user_data, false);
                                 // shareOverrideOGMeta('http://dantri.vn','1231211231313','Descriptio Description','https://static01.nyt.com/images/2015/02/19/arts/international/19iht-btnumbers19A/19iht-btnumbers19A-facebookJumbo-v2.jpg\nhttps://static01.nyt.com/images/2015/02/19/arts/international/19iht-btnumbers19A/19iht-btnumbers19A-facebookJumbo-v2.jpg')
@@ -110,7 +110,7 @@ var EventFormLoader = {
 		this.createContent(params);
 	},
     createContent: function(params) {
-		let me = this;
+		var me = this;
         var body = document.getElementsByTagName("body")[0];
         var od_div 	= document.createElement('div');
         od_div.className = "event_custom_body";
@@ -134,7 +134,7 @@ var EventFormLoader = {
         client_name.setAttribute("placeholder", "Your Name");
         client_name.setAttribute("autocomplete", "off");
 
-        let client_name_error  = document.createElement('label');
+        var client_name_error  = document.createElement('label');
         client_name_error.id = "client_name_error";
         client_name_error.setAttribute("class", "input-error");
         div.appendChild(client_name);
@@ -150,7 +150,7 @@ var EventFormLoader = {
         client_email.setAttribute("placeholder", "Your Email");
         client_email.setAttribute("autocomplete", "off");
         div.appendChild(client_email);
-        let client_email_error  = document.createElement('label');
+        var client_email_error  = document.createElement('label');
         client_email_error.id = "client_email_error";
         client_email_error.setAttribute("class", "input-error");
         div.appendChild(client_email_error);
@@ -165,7 +165,7 @@ var EventFormLoader = {
         client_phone.setAttribute("placeholder", "Phone");
         client_phone.setAttribute("autocomplete", "off");
         div.appendChild(client_phone);
-        let client_phone_error  = document.createElement('label');
+        var client_phone_error  = document.createElement('label');
         client_phone_error.id = "client_email_error";
         client_phone_error.setAttribute("class", "input-error");
         div.appendChild(client_phone_error);
@@ -214,19 +214,19 @@ var EventFormLoader = {
         });
 
         client_photo.addEventListener("change", function( event ) {
-            let error = false;
+            var error = false;
 
-            let _inputNameValue =  client_name.value;
-            let _inputNameError =  '';
+            var _inputNameValue =  client_name.value;
+            var _inputNameError =  '';
 
-            let _inputEmailValue =  client_email.value;
-            let _inputEmailError =  '';
+            var _inputEmailValue =  client_email.value;
+            var _inputEmailError =  '';
 
-            let _inputPhoneValue =  client_phone.value;
-            let _inputPhoneError =  '';
+            var _inputPhoneValue =  client_phone.value;
+            var _inputPhoneError =  '';
 
-            let _inputFileValue =  client_photo.value;
-            let _inputFileError =  '';
+            var _inputFileValue =  client_photo.value;
+            var _inputFileError =  '';
 
             client_name_error.innerHTML = '';
             client_email_error.innerHTML = '';
@@ -251,14 +251,14 @@ var EventFormLoader = {
             }
 
             //File check
-            let fileSize = this.files[0].size;
-            let file = this.files && this.files[0];;
-            let defaulSize = 595*601;
+            var fileSize = this.files[0].size;
+            var file = this.files && this.files[0];;
+            var defaulSize = 595*601;
             if(typeof _inputFileValue === 'undefined' || _inputFileValue.length == 0) {
                 _inputFileError = 'Please choose your image';
                 error = true;
             } else {
-                let extension = _inputFileValue.replace(/^.*\./, '');
+                var extension = _inputFileValue.replace(/^.*\./, '');
                 if (extension == _inputFileValue) {
                     extension = '';
                 } else {
@@ -268,8 +268,8 @@ var EventFormLoader = {
                 switch (extension) {
                     case 'jpg':
                     case 'jpeg':
-                    case 'png':
                     case 'gif':
+                    case 'png':
                         break;
                     default:
                         _inputFileError = 'Image is one of types: jpg, png, jpeg, gif';
@@ -311,7 +311,7 @@ var EventFormLoader = {
                         var width = img.naturalWidth,
                             height = img.naturalHeight;
                         window.URL.revokeObjectURL( img.src );
-                        let tile = parseInt(width/height * 100);
+                        var tile = parseInt(width/height * 100);
                         if( width >= 596 && height >= 601 && tile < 105 && tile > 95) {
                             var fileName = event.target.files[0].name;
                             // client_photo_label.innerHTML = fileName;
@@ -335,8 +335,8 @@ var EventFormLoader = {
                 data: formData,
                 success: function (result) {
                     // result = JSON.parse(result);
-                    let code = result.code;
-                    let data = result.data;
+                    var code = result.code;
+                    var data = result.data;
                     if(code === 1) {
                         createPictureContent(data,true);
                     } else {
@@ -485,11 +485,11 @@ function shareOverrideOGMeta(overrideLink, overrideTitle, overrideDescription, o
         });
 };
 function createModal(message) {
-    let modal = $('<div />', {class: 'modal', id: 'modal'});
-    let modalConent = $('<div />', {class: 'modal-content', id: 'modal-content'});
-    let closebtn = $('<span />', {class: 'close', id: '', text: '×'});
-    let modalBody = $('<div />', {class: 'modal-body', id: 'modal-body'});
-    let modalBodyText = $('<p />', {class: 'modal-body-text', html: message});
+    var modal = $('<div />', {class: 'modal', id: 'modal'});
+    var modalConent = $('<div />', {class: 'modal-content', id: 'modal-content'});
+    var closebtn = $('<span />', {class: 'close', id: '', text: '×'});
+    var modalBody = $('<div />', {class: 'modal-body', id: 'modal-body'});
+    var modalBodyText = $('<p />', {class: 'modal-body-text', html: message});
 
     modalBody.append(closebtn);
     modalBody.append(modalBodyText);
@@ -510,26 +510,26 @@ function createModal(message) {
 };
 function createPictureContent(data,showBackBtn) {
     $('body').addClass('form-sutmited');
-    let od_div = document.getElementById('event_custom_body_od_div');
-    let od_div2 = document.getElementById('event-custom-form-od-div2');
+    var od_div = document.getElementById('event_custom_body_od_div');
+    var od_div2 = document.getElementById('event-custom-form-od-div2');
     $(od_div).addClass('current-form-sutmited');
     /*If success change page*/
     if(typeof od_div2 !== "undefined" && od_div2 != null) {
         od_div2.style.display = 'none';
     }
-    let __div = $('<div />', {
+    var __div = $('<div />', {
         class: 'event_custom_body_submitted',
         id: 'event_custom_body_submitted',
     });
-    let img_div = $('<div />', {class: 'event-custom-client-div', id: 'event-custom-client-div',});
-    let img = $('<img />', {class: 'event-custom-client-img', id: '', src: data.PHOTO});
-    let buttonDiv = $('<div />', {class: 'button_group', id: 'button_group',});
-    let backBtnDiv = $('<div />', {
+    var img_div = $('<div />', {class: 'event-custom-client-div', id: 'event-custom-client-div',});
+    var img = $('<img />', {class: 'event-custom-client-img', id: '', src: data.PHOTO});
+    var buttonDiv = $('<div />', {class: 'button_group', id: 'button_group',});
+    var backBtnDiv = $('<div />', {
         class: 'button-back',
     });
-    let shareAdditionalClass = '';
+    var shareAdditionalClass = '';
     if(showBackBtn) {
-        let backBtn = $('<span />', {
+        var backBtn = $('<span />', {
             class: 'button-back-span',
             text: "back"
         });
@@ -547,10 +547,10 @@ function createPictureContent(data,showBackBtn) {
     } else {
         shareAdditionalClass = ' button-fb-share-center'
     }
-    let shareBtnDiv = $('<div />', {
+    var shareBtnDiv = $('<div />', {
         class: 'button-fb-share' + shareAdditionalClass,
     });
-    let shareBtn = $('<span />', {
+    var shareBtn = $('<span />', {
         class: 'button-fb-share-span',
         text: "Share now",
         onclick: "return shareOverrideOGMeta('"+window.location.origin + window.location.pathname+"?detail="+data.ID+"','KHOE KHOẢNH KHẮC WEFIE - NHẬN QUÀ VUI HẾT Ý','Tham gia ngay cùng bạn bè để nhân rộng niềm vui cùng Old Navy','"+data.PHOTO+"',"+data.ID+")",
