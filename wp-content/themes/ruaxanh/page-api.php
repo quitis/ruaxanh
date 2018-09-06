@@ -114,16 +114,21 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $return['code'] = -4;
             }
 
-            if ($return['code'] == 1) {
-                $upload_overrides = array('test_form' => false);
-                $movefile = wp_handle_upload($uploadedfile, $upload_overrides);
-                $photo = $movefile['url'];
-                $file_path = $movefile['file'];
+			if ($return['code'] == 1) {
+				$upload_overrides = array('test_form' => false);
+				$movefile = wp_handle_upload($uploadedfile, $upload_overrides);
+				$photo = $movefile['url'];
+				$file_path = $movefile['file'];
+					
+				$pos_x = intval($_POST["photo_x"]);
+				$pos_y = intval($_POST["photo_y"]);
+				$width = intval($_POST["photo_w"]);
+				$height = intval($_POST["photo_h"]);
+              $client->crop_image($file_path,$pos_x,$pos_y,$width,$height, $file_path);  
+				//$client->resize_image($file_path, PHOTO_WIDTH, PHOTO_HEIGHT, false, $file_path);
+              $client->merge_image($file_path, $file_path, $name);
 
-                $client->resize_image($file_path, PHOTO_WIDTH, PHOTO_HEIGHT, false, $file_path);
-                $client->merge_image($file_path, $file_path, $name);
-
-                $objClient = $client->check_client_exist($email);
+              $objClient = $client->check_client_exist($email);
 
                 if (empty($objClient)) {
                     $ID = $client->add_event_client($name, $email, $photo, $phone);
