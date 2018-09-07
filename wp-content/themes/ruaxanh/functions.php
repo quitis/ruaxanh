@@ -93,11 +93,11 @@ class Client_Api
 		$width = ($width>PHOTO_WIDTH)?PHOTO_WIDTH:$width;
 		$height = ($height>PHOTO_HEIGHT)?PHOTO_HEIGHT:$height;
 		
-		$img_r = imagecreatefromjpeg($file);
+		$img_r = $image_create_func($file);
 		$dst_r = ImageCreateTrueColor( PHOTO_WIDTH, PHOTO_HEIGHT );
 		imagecopyresampled($dst_r,$img_r,0,0,$pos_x,$pos_y,
 	PHOTO_WIDTH,PHOTO_HEIGHT,$width,$height);
-		imagejpeg($dst_r,$newfile,QUALITY);
+		$image_save_func($dst_r,$newfile,QUALITY);
 		imagedestroy($img_r);
 		imagedestroy($dst_r);
 	}

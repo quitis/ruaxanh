@@ -233,7 +233,7 @@ var EventFormLoader = {
         var client_file_notify  = document.createElement('label');
         client_file_notify.id = "client_file_notify";
         client_file_notify.setAttribute("class", "client_file_notify");
-        client_file_notify.innerHTML = "* Lưu ý:<br/>- Nên sử dụng hình ảnh kích cỡ vuông.<br/>"+
+        client_file_notify.innerHTML = "* Lưu ý:<br/>"+
         "- Nếu iPhone/iPad của bạn chưa load được hình, vui lòng làm theo hướng dẫn sau:<br>"+
         "Vào <b>Setting</b> > <b>Photo</b> > Chọn <b>Automatic</b> trong trường <b>TRANFER TO MAC OR PC</b> để chuyển đổi hình sang định dạng .jpg";
 

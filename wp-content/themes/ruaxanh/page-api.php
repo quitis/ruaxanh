@@ -106,7 +106,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $uploadedfile = $_FILES['client_photo'];
 
-            $allowed = array('gif', 'png', 'jpg');
+            $allowed = array('gif', 'png', 'jpg', 'jpeg');
             $filename = $_FILES['client_photo']['name'];
             $ext = pathinfo($filename, PATHINFO_EXTENSION);
             if (!in_array($ext, $allowed)) {
@@ -120,11 +120,11 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
 				$photo = $movefile['url'];
 				$file_path = $movefile['file'];
 					
-				$pos_x = intval($_POST["photo_x"]);
-				$pos_y = intval($_POST["photo_y"]);
-				$width = intval($_POST["photo_w"]);
-				$height = intval($_POST["photo_h"]);
-              $client->crop_image($file_path,$pos_x,$pos_y,$width,$height, $file_path);  
+				$pos_x = isset($_POST["photo_x"])?intval($_POST["photo_x"]):0;
+				$pos_y = isset($_POST["photo_y"])?intval($_POST["photo_y"]):0;
+				$width = isset($_POST["photo_w"])?intval($_POST["photo_w"]):PHOTO_WIDTH;
+				$height = isset($_POST["photo_h"])?intval($_POST["photo_h"]):PHOTO_HEIGHT;
+				$client->crop_image($file_path,$pos_x,$pos_y,$width,$height, $file_path);  
 				//$client->resize_image($file_path, PHOTO_WIDTH, PHOTO_HEIGHT, false, $file_path);
               $client->merge_image($file_path, $file_path, $name);
 
